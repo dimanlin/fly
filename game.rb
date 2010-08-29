@@ -1,38 +1,30 @@
+#!/usr/bin/env ruby
+
 require 'rubygems'
 require 'gosu'
-
-class Bulet
-
-	attr_reader :image, :x, :y, :speed
-
-	def initialize(image, x = 320, y = 240, speed = 5)
-		@y = y
-		@x = x
-		@speed = speed
-		@image = image
-	end
-
-	def update
-		@y -= @speed
-	end
-
-end
+require 'config'
+require 'bulet'
+require 'star'
 
 class GameWindow < Gosu::Window
 
 	@@speed_hor = 5
 	@@speed_ver = 5
+	@@timer_fire_blasters = Time.now.to_f
 
   def initialize 
-    super(1600, 1200, false)
+    super(640, 480, false)
     self.caption = "Fly"
+		@star = Gosu::Image.new(self, "images/stars/2.png", false)
     @fly = Gosu::Image.new(self, "images/ships/main.png", false)
     @fire = "images/ships/main.png"
     @x = @y = 320
 		@my_bulets = []
+		@stars = []
   end
 
   def update
+
     if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft
       @x -= @@speed_hor
     end
@@ -50,12 +42,27 @@ class GameWindow < Gosu::Window
     end
 
     if button_down? Gosu::Button::KbSpace
-    	@my_bulets << Bulet.new(@fire, @x, @y)
+			if @@timer_fire_blasters < (Time.now - 0.3).to_f
+				@@timer_fire_blasters = Time.now.to_f
+    		@my_bulets << Bulet.new(@fire, @x, @y)
+			end
     end
+
+		if rand(100) < 5 && @stars.size < 25
+			@stars << Star.new(@star)
+		end
 
   end
 
   def draw
+		@stars.each {|star|
+			if star.y > Config::WINDOW_HEIGHT
+				@stars.delete(star)
+			else
+				star.draw
+			end
+		}
+
     @my_bulets.each {|bulet|
 			Gosu::Image.new(self, bulet.image, false).draw_rot(bulet.x, bulet.y, 1, 0.0)
 			bulet.update
