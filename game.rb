@@ -13,7 +13,7 @@ class GameWindow < Gosu::Window
 	@@timer_fire_blasters = Time.now.to_f
 
   def initialize 
-    super(640, 480, false)
+    super(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, false)
     self.caption = "Fly"
 		@star = Gosu::Image.new(self, "images/stars/2.png", false)
     @fly = Gosu::Image.new(self, "images/ships/main.png", false)
@@ -26,19 +26,27 @@ class GameWindow < Gosu::Window
   def update
 
     if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft
-      @x -= @@speed_hor
+			unless @x <= 20
+	      @x -= @@speed_hor
+			end
     end
 
     if button_down? Gosu::Button::KbRight or button_down? Gosu::Button::GpRight
-      @x += @@speed_hor
+			unless @x >= (Config::WINDOW_WIDTH - 20)
+	      @x += @@speed_hor
+			end
     end
 
     if button_down? Gosu::Button::KbDown or button_down? Gosu::Button::GpDown
-      @y += @@speed_ver
+			if @y <= Config::WINDOW_HEIGHT - 25
+	      @y += @@speed_ver
+			end
     end
 
     if button_down? Gosu::Button::KbUp or button_down? Gosu::Button::GpUp
-      @y -= @@speed_ver
+			if @y >= 30
+	      @y -= @@speed_ver
+			end
     end
 
     if button_down? Gosu::Button::KbSpace
