@@ -56,7 +56,7 @@ class GameWindow < Gosu::Window
     if button_down? Gosu::Button::KbSpace
 			if @@timer_fire_blasters < (Time.now - 0.3).to_f
 				@@timer_fire_blasters = Time.now.to_f
-    		@my_bulets << Weapon.new(self, @x, @y, 1, @@weapon)
+    		@my_bulets << Weapon.new(self, @x, @y, 4, @@weapon)
 			end
     end
 
@@ -77,11 +77,12 @@ class GameWindow < Gosu::Window
 
     @my_bulets.each {|bulet|
 			bulet.draw
-			@my_bulets.delete(bulet) if bulet.y < -100
+			@my_bulets.delete(bulet) if bulet.need_delete?
 		}
     @fly.draw_rot(@x, @y, 1, 0.0)
   end	
 
   window = GameWindow.new
   window.show
+
 end
