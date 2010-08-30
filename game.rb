@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'gosu'
 require 'config'
-require 'bulet'
+require 'weapon'
 require 'star'
 
 class GameWindow < Gosu::Window
@@ -12,15 +12,19 @@ class GameWindow < Gosu::Window
 	@@speed_ver = 5
 	@@timer_fire_blasters = Time.now.to_f
 
+	@@weapon = "The resonance of souls"
+
   def initialize 
     super(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, false)
     self.caption = "Fly"
 		@star = Gosu::Image.new(self, "images/stars/2.png", false)
     @fly = Gosu::Image.new(self, "images/ships/main.png", false)
-    @fire = "images/ships/main.png"
     @x = @y = 320
+
 		@my_bulets = []
 		@stars = []
+
+		
   end
 
   def update
@@ -52,7 +56,7 @@ class GameWindow < Gosu::Window
     if button_down? Gosu::Button::KbSpace
 			if @@timer_fire_blasters < (Time.now - 0.3).to_f
 				@@timer_fire_blasters = Time.now.to_f
-    		@my_bulets << Bulet.new(@fire, @x, @y)
+    		@my_bulets << Weapon.new(self, @x, @y, 1, @@weapon)
 			end
     end
 
@@ -72,8 +76,7 @@ class GameWindow < Gosu::Window
 		}
 
     @my_bulets.each {|bulet|
-			Gosu::Image.new(self, bulet.image, false).draw_rot(bulet.x, bulet.y, 1, 0.0)
-			bulet.update
+			bulet.draw
 			@my_bulets.delete(bulet) if bulet.y < -100
 		}
     @fly.draw_rot(@x, @y, 1, 0.0)
